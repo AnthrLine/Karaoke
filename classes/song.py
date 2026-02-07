@@ -3,7 +3,7 @@ from mutagen.id3 import ID3, USLT, SYLT, ID3TimeStamp
 
 class Song:
 
-    # CONSTRUCOTR ######################################################################################################
+    # CONSTRUCTOR ######################################################################################################
     def __init__(self, filename: str) -> None:
         self._filename: str = filename
 
