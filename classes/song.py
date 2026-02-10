@@ -12,6 +12,7 @@ class Song:
         self._title: str = audio.get("TIT2", [""])[0]
         self._artist: str = audio.get("TPE2", [""])[0]
         self._album: str = audio.get("TALB", [""])[0]
+        self._length: int = audio.get("TLEN", [-1])[0]
 
         self._has_unsynced_lyrics = "USLT" in audio
         self._has_synced_lyrics = "SYLT" in audio
@@ -28,6 +29,9 @@ class Song:
 
     def getFilename(self) -> str:
         return self._filename
+
+    def getLength(self) -> int:
+        return self._length
 
     def hasSLRC(self) -> bool:
         return self._has_synced_lyrics
