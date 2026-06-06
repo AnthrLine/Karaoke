@@ -1,4 +1,9 @@
-import argparse
+from classes.fileReader import fileReader
 
-parser = argparse.ArgumentParser()
+def start() -> None:
+    nextFile = fileReader.next()
 
+
+
+if __name__ == '__main__':
+    start()
