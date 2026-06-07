@@ -22,10 +22,10 @@ class fileReader:
         list.close()
 
 
-    def getFiles(self):
+    def files(self):
         return self._files
 
-    def getDirectories(self):
+    def directories(self):
         return self._directories
 
     def isDirectoriesEnd(self) -> bool:
@@ -34,12 +34,12 @@ class fileReader:
     def isFilesEnd(self) -> bool:
         return len(self._files) >= self._filesI
 
-    def getNextFile(self) -> str:
+    def nextFile(self) -> str:
         res: str = self._files[self._filesI]
         self._filesI += 1
         return res
 
-    def getNextDirectory(self) -> str:
+    def nextDirectory(self) -> str:
         res: str = self._directories[self._directoriesI]
         self._directoriesI += 1
         return res
