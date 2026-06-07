@@ -21,7 +21,7 @@ class fileReader:
 
         list.close()
 
-    # GETTERS ##########################################################################################################
+
     def getFiles(self):
         return self._files
 
