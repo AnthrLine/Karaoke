@@ -1,6 +1,6 @@
 import os
 
-class fileReader:
+class FileReader:
 
     # CONSTRUCTOR ######################################################################################################
     def __init__(self, path: str = '.') -> None:

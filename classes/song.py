@@ -1,31 +1,52 @@
+import os
+
 import mutagen
-from mutagen.id3 import ID3, USLT, SYLT, ID3TimeStamp
+from abc import ABC, abstractmethod
+from typing import List, Tuple, MutableMapping, Type
 
-class song:
 
-    # CONSTRUCTOR ######################################################################################################
+class Song(ABC):
+    """Abstract base class for audio files."""
+
     def __init__(self, filename: str) -> None:
         self._filename: str = filename
 
-        audio = ID3(self._filename)
+        # mutagen.File generically reads standard audio properties
+        audio = mutagen.File(self._filename)
+        if audio is None:
+            raise ValueError(f"Unsupported or corrupted audio file: {filename}")
 
-        self._title: str = audio.get("TIT2", [""])[0]
-        self._artist: str = audio.get("TPE2", [""])[0]
-        self._album: str = audio.get("TALB", [""])[0]
-        self._length: int = audio.length
+        # Duration is universally accessible via info.length across all mutagen formats
+        self._length: int = int(audio.info.length)
 
-        self._has_unsynced_lyrics = "USLT" in audio
-        self._has_synced_lyrics = "SYLT" in audio
+    @staticmethod
+    def get_format_registry() -> MutableMapping[str, Type['Song']]:
+        """Returns a mutable map linking file extensions to their handlers."""
+        # Deferring the references inside the method ensures the subclasses
+        # are fully loaded into memory before this dictionary is constructed.
+        from classes.MP3Song import MP3Song
+        from classes.FLACSong import FLACSong
+        from classes.OGGSong import OGGSong
+        from classes.WAVSong import WAVSong
 
+        return {
+            ".mp3": MP3Song,
+            ".flac": FLACSong,
+            ".ogg": OGGSong,
+            ".wav": WAVSong
+        }
 
-    def title(self) -> str:
-        return self._title
+    @classmethod
+    def from_file(cls, filename: str) -> 'Song':
+        """Factory method to automatically instantiate the correct Song subclass."""
+        _, ext = os.path.splitext(filename)
+        registry = cls.get_format_registry()
 
-    def artist(self) -> str:
-        return self._artist
+        handler_class = registry.get(ext.lower())
+        if not handler_class:
+            raise ValueError(f"Unsupported file extension: {ext}")
 
-    def album(self) -> str:
-        return self._album
+        return handler_class(filename)
 
     def filename(self) -> str:
         return self._filename
@@ -33,41 +54,30 @@ class song:
     def length(self) -> int:
         return self._length
 
+    @abstractmethod
+    def title(self) -> str:
+        pass
+
+    @abstractmethod
+    def artist(self) -> str:
+        pass
+
+    @abstractmethod
+    def album(self) -> str:
+        pass
+
+    @abstractmethod
     def hasSLRC(self) -> bool:
-        return self._has_synced_lyrics
+        pass
 
+    @abstractmethod
     def hasULRC(self) -> bool:
-        return self._has_unsynced_lyrics
+        pass
 
-    # SETTERS ##########################################################################################################
-
+    @abstractmethod
     def addULRC(self, lrc: str) -> None:
-        audio = ID3(self._filename)
+        pass
 
-        audio.add(USLT(
-            desc='Lyrics',
-            text=lrc
-        ))
-
-        # Save the changes
-        audio.save()
-
-    def addSLRC(self, lrc) -> None:
-        audio = ID3(self._filename)
-
-        sylt_frame = SYLT(
-            format=1,  # Format: 1 for time-stamped lyrics
-            type=1,  # Type: 1 for lyrics
-            desc='Synced Lyrics',
-            text=[]
-        )
-
-        # Add each lyric and its timestamp
-        for timestamp, lyric in lrc:
-            sylt_frame.text.append((ID3TimeStamp(timestamp), lyric))
-
-        # Add the SYLT frame to the audio file
-        audio.add(sylt_frame)
-
-        # Save the changes
-        audio.save()
+    @abstractmethod
+    def addSLRC(self, lrc: List[Tuple[int, str]]) -> None:
+        pass

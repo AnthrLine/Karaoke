@@ -1,7 +1,7 @@
 from classes import song
 import requests
 
-class lrcgetter:
+class Lrcgetter:
 
     # CONSTRUCTOR ######################################################################################################
     def __init__(self, track):

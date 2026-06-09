@@ -1,7 +1,7 @@
-from classes.fileReader import fileReader
+from classes.FileReader import FileReader
 
 def start() -> None:
-    nextFile = fileReader.next()
+    nextFile = FileReader.next()
 
 
 
