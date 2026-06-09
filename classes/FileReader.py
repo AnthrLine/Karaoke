@@ -13,13 +13,12 @@ class FileReader:
 
         list = os.scandir(path)
 
-        for entry in list: # Ignores symlinks
-            if entry.is_file():
-                self._files.append(entry.name)
-            elif entry.is_dir():
-                self._directories.append(entry.name)
-
-        list.close()
+        with os.scandir(path) as entries:
+            for entry in entries:  # Ignores symlinks automatically
+                if entry.is_file():
+                    self._files.append(entry.path)
+                elif entry.is_dir():
+                    self._directories.append(entry.path)
 
 
     def files(self):
@@ -29,10 +28,10 @@ class FileReader:
         return self._directories
 
     def isDirectoriesEnd(self) -> bool:
-        return len(self._directories) >= self._directoriesI
+        return self._directoriesI >= len(self._directories)
 
     def isFilesEnd(self) -> bool:
-        return len(self._files) >= self._filesI
+        return self._filesI >= len(self._files)
 
     def nextFile(self) -> str:
         res: str = self._files[self._filesI]
