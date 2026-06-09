@@ -31,12 +31,18 @@ class MP3Song(Song):
         self.audio.save()
 
     def addSLRC(self, lrc: str) -> None:
-        sylt_frame = SYLT(format=1, type=1, desc='Synced Lyrics', text=[])
+        sylt_frame = SYLT(
+            encoding=3,
+            format=2,
+            type=1,
+            desc='Synced Lyrics',
+            text=[]
+        )
 
-        # Parse the raw LRC string into timestamps for the ID3 frame
         parsed_timestamps = Song.parse_lrc_to_ms(lrc)
+
         for timestamp_ms, lyric in parsed_timestamps:
-            sylt_frame.text.append((ID3TimeStamp(timestamp_ms), lyric))
+            sylt_frame.text.append((lyric, timestamp_ms))
 
         self.audio.tags.add(sylt_frame)
         self.audio.save()

@@ -17,7 +17,7 @@ class VorbisCommentSong(Song):
         return self._get_tag("album")
 
     def hasSLRC(self) -> bool:
-        return "syncedlyrics" in self.audio
+        return "lyrics" in self.audio
 
     def hasULRC(self) -> bool:
         return "lyrics" in self.audio
@@ -27,5 +27,5 @@ class VorbisCommentSong(Song):
         self.audio.save()
 
     def addSLRC(self, lrc: str) -> None:
-        self.audio["syncedlyrics"] = lrc
+        self.audio["lyrics"] = lrc
         self.audio.save()
