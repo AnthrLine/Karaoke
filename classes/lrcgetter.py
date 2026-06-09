@@ -24,6 +24,8 @@ class Lrcgetter:
             # remove album and retry once
             payload.pop('album_name', None)
             r = requests.get('https://lrclib.net/api/get', params=payload)
+        elif r.status_code != 200:
+            raise Exception
 
         return r
 
