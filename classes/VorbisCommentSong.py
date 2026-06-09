@@ -26,9 +26,6 @@ class VorbisCommentSong(Song):
         self.audio["lyrics"] = lrc
         self.audio.save()
 
-    def addSLRC(self, lrc: List[Tuple[int, str]]) -> None:
-        # Vorbis does not have a native binary synced format like ID3.
-        # It relies on formatting an LRC string directly into a tag.
-        lrc_string = "\n".join([f"[{timestamp}] {lyric}" for timestamp, lyric in lrc])
-        self.audio["syncedlyrics"] = lrc_string
+    def addSLRC(self, lrc: str) -> None:
+        self.audio["syncedlyrics"] = lrc
         self.audio.save()

@@ -32,9 +32,12 @@ class WAVSong(Song):
         self.audio.tags.add(USLT(desc='Lyrics', text=lrc))
         self.audio.save()
 
-    def addSLRC(self, lrc: List[Tuple[int, str]]) -> None:
+    def addSLRC(self, lrc: str) -> None:
         sylt_frame = SYLT(format=1, type=1, desc='Synced Lyrics', text=[])
-        for timestamp, lyric in lrc:
-            sylt_frame.text.append((ID3TimeStamp(timestamp), lyric))
+
+        parsed_timestamps = Song.parse_lrc_to_ms(lrc)
+        for timestamp_ms, lyric in parsed_timestamps:
+            sylt_frame.text.append((ID3TimeStamp(timestamp_ms), lyric))
+
         self.audio.tags.add(sylt_frame)
         self.audio.save()
