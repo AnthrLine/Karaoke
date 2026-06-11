@@ -11,6 +11,6 @@ It is, for now, a WIP, and **not usable in any state**.
 ### Roadmap
 
  - [ ] Dockerize
- - [ ] Add a mode to scan for a single file
+ - [x] Add a mode to scan for a single file
  - [x] Modify starting directory
  - [ ] Modify to env variable its lrc preference (or both)

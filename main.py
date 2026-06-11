@@ -1,4 +1,5 @@
 import os
+import sys
 
 from classes.FileReader import FileReader
 from typing import List, Tuple
@@ -23,6 +24,18 @@ def addLRC(song: Song):
     else:
         print(f"[NO_LRC] No lyrics found for: {song.filename()} ({song.length()}s)")
 
+
+def processSong(file_path: str):
+    try:
+        song = Song.from_file(file_path)
+
+        if not song.hasULRC() and not song.hasSLRC():
+            addLRC(song)
+    except Exception as e:
+        print(f"[ERROR] Failed to process song {file_path}: {e}")
+
+
+
 def recursiveScan():
     root_directory = getRootDir()
     dir_stack: List[str] = [root_directory]
@@ -43,13 +56,7 @@ def recursiveScan():
             file_path = reader.nextFile()
             _, ext = os.path.splitext(file_path)
 
-            try:
-                song = Song.from_file(file_path)
-            except Exception as e:
-                print(f"[ERROR] Failed to process song {file_path}: {e}")
-
-            if not song.hasULRC() and not song.hasSLRC():
-                addLRC(song)
+            processSong(file_path)
 
         # Push discovered subdirectories onto our stack so they get processed recursively next
         while not reader.isDirectoriesEnd():
@@ -57,38 +64,12 @@ def recursiveScan():
             dir_stack.append(sub_dir)
 
 def start() -> None:
-    root_directory = getRootDir()
-    dir_stack: List[str] = [root_directory]
+    args = sys.argv
 
-    print(f"Starting recursive scan from: {os.path.abspath(root_directory)}\n")
-
-    while dir_stack:
-        current_dir = dir_stack.pop()
-
-        try:
-            reader = FileReader(current_dir)
-        except Exception as e:
-            print(f"Skipping directory {current_dir} due to error: {e}")
-            continue
-
-        # Process all files found in the current directory level
-        while not reader.isFilesEnd():
-            file_path = reader.nextFile()
-            _, ext = os.path.splitext(file_path)
-
-            try:
-                song = Song.from_file(file_path)
-
-            except Exception as e:
-                print(f"[ERROR] Failed to process song {file_path}: {e}")
-
-            if not song.hasULRC() and not song.hasSLRC():
-                addLRC(song)
-
-        # Push discovered subdirectories onto our stack so they get processed recursively next
-        while not reader.isDirectoriesEnd():
-            sub_dir = reader.nextDirectory()
-            dir_stack.append(sub_dir)
+    if(len(args) == 1):
+        recursiveScan()
+    elif (len(args) >= 2):
+        processSong(args[1])
 
 if __name__ == '__main__':
     start()
