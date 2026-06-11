@@ -6,6 +6,9 @@ from typing import List, Tuple
 from classes.lrcgetter import Lrcgetter
 from classes.song import Song
 
+def getRootDir() -> str:
+    return os.getenv("KARAOKE_START_DIR", ".")
+
 def addLRC(song: Song):
 
     ULRC, SLRC = Lrcgetter.searchSong(song)
@@ -21,7 +24,7 @@ def addLRC(song: Song):
         print(f"[NO_LRC] No lyrics found for: {song.filename()} ({song.length()}s)")
 
 def start() -> None:
-    root_directory = "./debug"
+    root_directory = getRootDir()
     dir_stack: List[str] = [root_directory]
 
     print(f"Starting recursive scan from: {os.path.abspath(root_directory)}\n")

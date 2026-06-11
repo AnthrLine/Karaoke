@@ -12,5 +12,5 @@ It is, for now, a WIP, and **not usable in any state**.
 
  - [ ] Dockerize
  - [ ] Add a mode to scan for a single file
- - [ ] Modify starting directory
+ - [x] Modify starting directory
  - [ ] Modify to env variable its lrc preference (or both)
