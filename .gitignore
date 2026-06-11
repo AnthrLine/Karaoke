@@ -1,2 +1,4 @@
 /debug/
 .idea/
+.venv
+.env
